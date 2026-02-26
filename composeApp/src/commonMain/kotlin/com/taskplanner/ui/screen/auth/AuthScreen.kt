@@ -29,6 +29,7 @@ class AuthScreen : Screen {
         var isLogin by remember { mutableStateOf(true) }
         var username by remember { mutableStateOf("") }
         var password by remember { mutableStateOf("") }
+        var inviteCode by remember { mutableStateOf("") }
         var error by remember { mutableStateOf<String?>(null) }
         var isLoading by remember { mutableStateOf(false) }
 
@@ -76,6 +77,19 @@ class AuthScreen : Screen {
                 shape = RoundedCornerShape(12.dp),
             )
 
+            if (!isLogin) {
+                Spacer(Modifier.height(12.dp))
+
+                OutlinedTextField(
+                    value = inviteCode,
+                    onValueChange = { inviteCode = it; error = null },
+                    label = { Text("Invite Code") },
+                    singleLine = true,
+                    modifier = Modifier.fillMaxWidth(0.8f),
+                    shape = RoundedCornerShape(12.dp),
+                )
+            }
+
             if (error != null) {
                 Spacer(Modifier.height(8.dp))
                 Text(
@@ -95,7 +109,7 @@ class AuthScreen : Screen {
                         val result = if (isLogin) {
                             authRepository.login(username, password)
                         } else {
-                            authRepository.register(username, password)
+                            authRepository.register(username, password, inviteCode)
                         }
 
                         result.fold(

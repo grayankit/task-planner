@@ -19,6 +19,15 @@ fun Route.authRoutes() {
         post("/register") {
             val request = call.receive<AuthRequest>()
 
+            // Validate invite code
+            val requiredInviteCode = System.getenv("INVITE_CODE")
+            if (!requiredInviteCode.isNullOrBlank()) {
+                if (request.inviteCode.isNullOrBlank() || request.inviteCode != requiredInviteCode) {
+                    call.respond(HttpStatusCode.Forbidden, mapOf("error" to "Invalid invite code"))
+                    return@post
+                }
+            }
+
             if (request.username.length < 3) {
                 call.respond(HttpStatusCode.BadRequest, mapOf("error" to "Username must be at least 3 characters"))
                 return@post

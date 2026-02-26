@@ -23,9 +23,9 @@ class AuthRepository(
 
     fun isLoggedIn(): Boolean = getStoredToken() != null
 
-    suspend fun register(username: String, password: String): Result<AuthResponse> {
+    suspend fun register(username: String, password: String, inviteCode: String): Result<AuthResponse> {
         return try {
-            val response = apiService.register(AuthRequest(username, password))
+            val response = apiService.register(AuthRequest(username, password, inviteCode))
             database.authTokenQueries.saveToken(response.token, response.userId, response.username)
             Result.success(response)
         } catch (e: Exception) {
