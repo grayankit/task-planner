@@ -12,7 +12,7 @@ import com.taskplanner.db.TaskPlannerDatabase
 import org.koin.dsl.module
 
 // Base URL configurable via env or hardcoded for dev
-const val DEFAULT_BASE_URL = "http://localhost:8080"
+const val DEFAULT_BASE_URL = "https://task-planner-api-vhkm.onrender.com"
 
 fun appModule(driverFactory: DriverFactory) = module {
     // Database
