@@ -1,0 +1,31 @@
+CREATE TABLE CategoryEntity (
+    id TEXT NOT NULL PRIMARY KEY,
+    user_id TEXT NOT NULL,
+    name TEXT NOT NULL,
+    color TEXT,
+    is_default INTEGER NOT NULL DEFAULT 0,
+    created_at TEXT NOT NULL,
+    updated_at TEXT NOT NULL
+);
+
+getAllCategories:
+SELECT * FROM CategoryEntity ORDER BY is_default DESC, created_at ASC;
+
+getCategoryById:
+SELECT * FROM CategoryEntity WHERE id = ?;
+
+getDefaultCategory:
+SELECT * FROM CategoryEntity WHERE is_default = 1 LIMIT 1;
+
+insertCategory:
+INSERT OR REPLACE INTO CategoryEntity (id, user_id, name, color, is_default, created_at, updated_at)
+VALUES (?, ?, ?, ?, ?, ?, ?);
+
+updateCategory:
+UPDATE CategoryEntity SET name = ?, color = ?, updated_at = ? WHERE id = ?;
+
+deleteCategory:
+DELETE FROM CategoryEntity WHERE id = ? AND is_default = 0;
+
+deleteAllCategories:
+DELETE FROM CategoryEntity;

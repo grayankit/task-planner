@@ -1,0 +1,17 @@
+services:
+  - type: web
+    name: task-planner-api
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    plan: free
+    envVars:
+      - key: DATABASE_URL
+        sync: false  # Set manually in Render dashboard
+      - key: JWT_SECRET
+        generateValue: true
+      - key: JWT_ISSUER
+        value: task-planner
+      - key: JWT_AUDIENCE
+        value: task-planner-users
+      - key: PORT
+        value: 8080
