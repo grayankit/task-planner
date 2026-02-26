@@ -6,7 +6,7 @@ plugins {
 }
 
 application {
-    mainClass.set("com.taskplanner.server.ApplicationKt")
+    mainClass.set("xyz.ankitgrai.taskplanner.server.ApplicationKt")
 }
 
 ktor {

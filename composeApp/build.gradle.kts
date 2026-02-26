@@ -80,15 +80,31 @@ kotlin {
 }
 
 android {
-    namespace = "com.taskplanner"
+    namespace = "xyz.ankitgrai.taskplanner"
     compileSdk = 35
 
     defaultConfig {
-        applicationId = "com.taskplanner"
+        applicationId = "xyz.ankitgrai.taskplanner"
         minSdk = 26
         targetSdk = 35
         versionCode = 1
         versionName = "1.0"
+    }
+
+    signingConfigs {
+        create("release") {
+            storeFile = file("keystore/release.keystore")
+            storePassword = System.getenv("KEYSTORE_PASSWORD")
+            keyAlias = System.getenv("KEY_ALIAS")
+            keyPassword = System.getenv("KEY_PASSWORD")
+        }
+    }
+
+    buildTypes {
+        release {
+            isMinifyEnabled = false
+            signingConfig = signingConfigs.getByName("release")
+        }
     }
 
     compileOptions {
@@ -99,14 +115,25 @@ android {
 
 compose.desktop {
     application {
-        mainClass = "com.taskplanner.MainKt"
+        mainClass = "xyz.ankitgrai.taskplanner.MainKt"
+
+        nativeDistributions {
+            packageName = "TaskPlanner"
+            packageVersion = "1.0.0"
+            description = "Task Planner - KMP task management app"
+            vendor = "ankitgrai"
+
+            linux {
+                packageName = "task-planner"
+            }
+        }
     }
 }
 
 sqldelight {
     databases {
         create("TaskPlannerDatabase") {
-            packageName.set("com.taskplanner.db")
+            packageName.set("xyz.ankitgrai.taskplanner.db")
         }
     }
 }
