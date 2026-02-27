@@ -107,7 +107,35 @@ class SyncManager(
 
         // Apply pulled changes
         response.tasks.forEach { task -> taskRepository.upsertTask(task) }
-        response.categories.forEach { cat -> categoryRepository.upsertCategory(cat) }
+
+        // Dedup categories: if server sends a category whose name matches a local one
+        // with a different ID, the server version wins. Remap tasks from old ID to new ID.
+        response.categories.forEach { serverCat ->
+            val localDuplicate = database.categoryQueries
+                .findByNameCaseInsensitive(serverCat.name)
+                .executeAsOneOrNull()
+            if (localDuplicate != null && localDuplicate.id != serverCat.id) {
+                // Remap tasks from old local ID to server's canonical ID
+                val tasksWithOldId = database.taskQueries.getTasksByCategory(localDuplicate.id).executeAsList()
+                for (task in tasksWithOldId) {
+                    database.taskQueries.updateTask(
+                        category_id = serverCat.id,
+                        title = task.title,
+                        description = task.description,
+                        priority = task.priority,
+                        due_date = task.due_date,
+                        due_time = task.due_time,
+                        is_completed = task.is_completed,
+                        completed_at = task.completed_at,
+                        updated_at = task.updated_at,
+                        id = task.id,
+                    )
+                }
+                // Force delete the old local duplicate (even if default — server's version is canonical)
+                database.categoryQueries.forceDeleteCategory(localDuplicate.id)
+            }
+            categoryRepository.upsertCategory(serverCat)
+        }
 
         // Remove deleted entities
         response.deletedTaskIds.forEach { id ->

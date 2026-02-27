@@ -45,6 +45,13 @@ fun Route.categoryRoutes() {
                 return@post
             }
 
+            // Check for duplicate name (case-insensitive)
+            val existing = categoryDao.findByNameAndUserId(request.name, userId)
+            if (existing != null) {
+                call.respond(HttpStatusCode.Conflict, mapOf("error" to "A category with this name already exists"))
+                return@post
+            }
+
             val category = categoryDao.create(
                 userId = userId,
                 name = request.name,
@@ -61,6 +68,15 @@ fun Route.categoryRoutes() {
                 mapOf("error" to "Missing category ID"),
             )
             val request = call.receive<UpdateCategoryRequest>()
+
+            // Check for duplicate name (case-insensitive), excluding current category
+            if (request.name != null) {
+                val existing = categoryDao.findByNameAndUserId(request.name!!, userId)
+                if (existing != null && existing.id != categoryId) {
+                    call.respond(HttpStatusCode.Conflict, mapOf("error" to "A category with this name already exists"))
+                    return@put
+                }
+            }
 
             val category = categoryDao.update(
                 id = categoryId,

@@ -148,19 +148,34 @@ private suspend fun handleCategorySync(
     when (operationType) {
         "CREATE" -> {
             val category = json.decodeFromString<CategoryDto>(payload)
-            val existing = categoryDao.getById(entityId, userId)
-            if (existing == null) {
-                categoryDao.createWithId(
-                    id = entityId,
-                    userId = userId,
-                    name = category.name,
-                    color = category.color,
-                    isDefault = category.isDefault,
-                )
+            val existingById = categoryDao.getById(entityId, userId)
+            if (existingById == null) {
+                // Check if a category with the same name already exists (case-insensitive)
+                val existingByName = categoryDao.findByNameAndUserId(category.name, userId)
+                if (existingByName != null) {
+                    // Skip creating duplicate — server already has a category with this name
+                    println("Sync: skipping duplicate category name '${category.name}' (existing id=${existingByName.id}, pushed id=$entityId)")
+                } else {
+                    categoryDao.createWithId(
+                        id = entityId,
+                        userId = userId,
+                        name = category.name,
+                        color = category.color,
+                        isDefault = category.isDefault,
+                    )
+                }
             }
         }
         "UPDATE" -> {
             val category = json.decodeFromString<CategoryDto>(payload)
+            // Check if renaming would collide with another category
+            if (category.name.isNotBlank()) {
+                val existingByName = categoryDao.findByNameAndUserId(category.name, userId)
+                if (existingByName != null && existingByName.id != entityId) {
+                    println("Sync: skipping category update — name '${category.name}' conflicts with existing id=${existingByName.id}")
+                    return
+                }
+            }
             categoryDao.update(
                 id = entityId,
                 userId = userId,

@@ -32,6 +32,12 @@ class CategoryDao {
             .singleOrNull()
     }
 
+    suspend fun findByNameAndUserId(name: String, userId: String): CategoryDto? = dbQuery {
+        Categories.selectAll().where {
+            (Categories.userId eq userId) and (Categories.name.lowerCase() eq name.lowercase())
+        }.map(::resultRowToCategory).firstOrNull()
+    }
+
     suspend fun create(userId: String, name: String, color: String?, isDefault: Boolean = false): CategoryDto = dbQuery {
         val id = UUID.randomUUID().toString()
         val now = LocalDateTime.now()

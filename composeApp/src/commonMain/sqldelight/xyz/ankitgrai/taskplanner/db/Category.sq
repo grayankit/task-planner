@@ -14,6 +14,9 @@ SELECT * FROM CategoryEntity ORDER BY is_default DESC, created_at ASC;
 getCategoryById:
 SELECT * FROM CategoryEntity WHERE id = ?;
 
+findByNameCaseInsensitive:
+SELECT * FROM CategoryEntity WHERE LOWER(name) = LOWER(?) LIMIT 1;
+
 getDefaultCategory:
 SELECT * FROM CategoryEntity WHERE is_default = 1 LIMIT 1;
 
@@ -26,6 +29,9 @@ UPDATE CategoryEntity SET name = ?, color = ?, updated_at = ? WHERE id = ?;
 
 deleteCategory:
 DELETE FROM CategoryEntity WHERE id = ? AND is_default = 0;
+
+forceDeleteCategory:
+DELETE FROM CategoryEntity WHERE id = ?;
 
 deleteAllCategories:
 DELETE FROM CategoryEntity;

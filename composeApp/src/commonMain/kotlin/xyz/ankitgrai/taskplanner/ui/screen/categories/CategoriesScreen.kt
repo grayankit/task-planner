@@ -82,6 +82,8 @@ class CategoriesScreen : Screen {
                 title = "New Category",
                 initialName = "",
                 initialColor = "#42A5F5",
+                existingCategories = categories,
+                excludeCategoryId = null,
                 onDismiss = { showCreateDialog = false },
                 onSave = { name, color ->
                     scope.launch {
@@ -98,6 +100,8 @@ class CategoriesScreen : Screen {
                 title = "Edit Category",
                 initialName = editingCategory!!.name,
                 initialColor = editingCategory!!.color ?: "#42A5F5",
+                existingCategories = categories,
+                excludeCategoryId = editingCategory!!.id,
                 onDismiss = { editingCategory = null },
                 onSave = { name, color ->
                     scope.launch {
@@ -177,11 +181,19 @@ private fun CategoryDialog(
     title: String,
     initialName: String,
     initialColor: String,
+    existingCategories: List<CategoryDto>,
+    excludeCategoryId: String?,
     onDismiss: () -> Unit,
     onSave: (name: String, color: String) -> Unit,
 ) {
     var name by remember { mutableStateOf(initialName) }
     var color by remember { mutableStateOf(initialColor) }
+
+    val isDuplicate = remember(name, existingCategories, excludeCategoryId) {
+        name.isNotBlank() && existingCategories.any { cat ->
+            cat.id != excludeCategoryId && cat.name.equals(name.trim(), ignoreCase = true)
+        }
+    }
 
     val presetColors = listOf(
         "#E53935", "#FB8C00", "#FDD835", "#43A047",
@@ -200,6 +212,12 @@ private fun CategoryDialog(
                     singleLine = true,
                     modifier = Modifier.fillMaxWidth(),
                     shape = RoundedCornerShape(12.dp),
+                    isError = isDuplicate,
+                    supportingText = if (isDuplicate) {
+                        { Text("A category with this name already exists") }
+                    } else {
+                        null
+                    },
                 )
 
                 Spacer(Modifier.height(12.dp))
@@ -232,8 +250,8 @@ private fun CategoryDialog(
         },
         confirmButton = {
             TextButton(
-                onClick = { onSave(name, color) },
-                enabled = name.isNotBlank(),
+                onClick = { onSave(name.trim(), color) },
+                enabled = name.isNotBlank() && !isDuplicate,
             ) {
                 Text("Save")
             }
