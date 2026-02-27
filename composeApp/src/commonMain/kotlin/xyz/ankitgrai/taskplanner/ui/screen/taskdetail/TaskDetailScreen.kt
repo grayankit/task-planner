@@ -6,9 +6,12 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Clear
+import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.screen.Screen
@@ -20,6 +23,7 @@ import xyz.ankitgrai.taskplanner.shared.model.CategoryDto
 import xyz.ankitgrai.taskplanner.shared.model.Priority
 import xyz.ankitgrai.taskplanner.ui.components.PrioritySelector
 import kotlinx.coroutines.launch
+import kotlinx.datetime.*
 import org.koin.compose.koinInject
 
 data class TaskDetailScreen(
@@ -42,10 +46,13 @@ data class TaskDetailScreen(
         var title by remember { mutableStateOf("") }
         var description by remember { mutableStateOf("") }
         var priority by remember { mutableStateOf(Priority.MEDIUM.value) }
-        var dueDate by remember { mutableStateOf("") }
+        val today = remember { Clock.System.todayIn(TimeZone.currentSystemDefault()).toString() }
+        var dueDate by remember { mutableStateOf(today) }
         var dueTime by remember { mutableStateOf("") }
         var selectedCategoryId by remember { mutableStateOf(preselectedCategoryId) }
         var isInitialized by remember { mutableStateOf(false) }
+        var showDatePicker by remember { mutableStateOf(false) }
+        var showTimePicker by remember { mutableStateOf(false) }
 
         // Default to General category when creating a new task with no preselected category
         LaunchedEffect(categories) {
@@ -148,27 +155,131 @@ data class TaskDetailScreen(
 
                 Spacer(Modifier.height(16.dp))
 
-                // Due date (text input — ISO format)
-                OutlinedTextField(
-                    value = dueDate,
-                    onValueChange = { dueDate = it },
-                    label = { Text("Due date (YYYY-MM-DD)") },
-                    singleLine = true,
+                // Due date picker
+                Row(
                     modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(12.dp),
-                )
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    OutlinedTextField(
+                        value = if (dueDate.isNotBlank()) formatDateDisplay(dueDate) else "",
+                        onValueChange = {},
+                        readOnly = true,
+                        label = { Text("Due date") },
+                        placeholder = { Text("Select date") },
+                        singleLine = true,
+                        modifier = Modifier.weight(1f),
+                        shape = RoundedCornerShape(12.dp),
+                        trailingIcon = {
+                            Row {
+                                if (dueDate.isNotBlank()) {
+                                    IconButton(onClick = { dueDate = "" }) {
+                                        Icon(Icons.Default.Clear, contentDescription = "Clear date", modifier = Modifier.size(20.dp))
+                                    }
+                                }
+                                IconButton(onClick = { showDatePicker = true }) {
+                                    Icon(Icons.Default.DateRange, contentDescription = "Pick date")
+                                }
+                            }
+                        },
+                    )
+                }
 
                 Spacer(Modifier.height(12.dp))
 
-                // Due time (text input — ISO format)
-                OutlinedTextField(
-                    value = dueTime,
-                    onValueChange = { dueTime = it },
-                    label = { Text("Due time (HH:MM)") },
-                    singleLine = true,
+                // Due time picker
+                Row(
                     modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(12.dp),
-                )
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    OutlinedTextField(
+                        value = if (dueTime.isNotBlank()) formatTimeDisplay(dueTime) else "",
+                        onValueChange = {},
+                        readOnly = true,
+                        label = { Text("Due time") },
+                        placeholder = { Text("Select time") },
+                        singleLine = true,
+                        modifier = Modifier.weight(1f),
+                        shape = RoundedCornerShape(12.dp),
+                        trailingIcon = {
+                            Row {
+                                if (dueTime.isNotBlank()) {
+                                    IconButton(onClick = { dueTime = "" }) {
+                                        Icon(Icons.Default.Clear, contentDescription = "Clear time", modifier = Modifier.size(20.dp))
+                                    }
+                                }
+                                IconButton(onClick = { showTimePicker = true }) {
+                                    Icon(Icons.Default.DateRange, contentDescription = "Pick time")
+                                }
+                            }
+                        },
+                    )
+                }
+
+                // Date picker dialog
+                if (showDatePicker) {
+                    val initialMillis = if (dueDate.isNotBlank()) {
+                        try {
+                            LocalDate.parse(dueDate)
+                                .atStartOfDayIn(TimeZone.UTC)
+                                .toEpochMilliseconds()
+                        } catch (_: Exception) { null }
+                    } else null
+
+                    val datePickerState = rememberDatePickerState(
+                        initialSelectedDateMillis = initialMillis
+                            ?: Clock.System.now().toEpochMilliseconds(),
+                    )
+
+                    DatePickerDialog(
+                        onDismissRequest = { showDatePicker = false },
+                        confirmButton = {
+                            TextButton(onClick = {
+                                datePickerState.selectedDateMillis?.let { millis ->
+                                    val instant = Instant.fromEpochMilliseconds(millis)
+                                    val date = instant.toLocalDateTime(TimeZone.UTC).date
+                                    dueDate = date.toString()
+                                }
+                                showDatePicker = false
+                            }) { Text("OK") }
+                        },
+                        dismissButton = {
+                            TextButton(onClick = { showDatePicker = false }) { Text("Cancel") }
+                        },
+                    ) {
+                        DatePicker(state = datePickerState)
+                    }
+                }
+
+                // Time picker dialog
+                if (showTimePicker) {
+                    val now = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
+                    val initialHour = if (dueTime.isNotBlank()) {
+                        try { dueTime.substringBefore(":").toInt() } catch (_: Exception) { now.hour }
+                    } else now.hour
+                    val initialMinute = if (dueTime.isNotBlank()) {
+                        try { dueTime.substringAfter(":").toInt() } catch (_: Exception) { now.minute }
+                    } else now.minute
+
+                    val timePickerState = rememberTimePickerState(
+                        initialHour = initialHour,
+                        initialMinute = initialMinute,
+                    )
+
+                    AlertDialog(
+                        onDismissRequest = { showTimePicker = false },
+                        confirmButton = {
+                            TextButton(onClick = {
+                                dueTime = "%02d:%02d".format(timePickerState.hour, timePickerState.minute)
+                                showTimePicker = false
+                            }) { Text("OK") }
+                        },
+                        dismissButton = {
+                            TextButton(onClick = { showTimePicker = false }) { Text("Cancel") }
+                        },
+                        title = { Text("Select time") },
+                        text = { TimePicker(state = timePickerState) },
+                    )
+                }
 
                 Spacer(Modifier.height(24.dp))
 
@@ -211,6 +322,36 @@ data class TaskDetailScreen(
                 Spacer(Modifier.height(32.dp))
             }
         }
+    }
+}
+
+private fun formatDateDisplay(isoDate: String): String {
+    return try {
+        val date = LocalDate.parse(isoDate)
+        val months = arrayOf(
+            "Jan", "Feb", "Mar", "Apr", "May", "Jun",
+            "Jul", "Aug", "Sep", "Oct", "Nov", "Dec",
+        )
+        "${months[date.monthNumber - 1]} ${date.dayOfMonth}, ${date.year}"
+    } catch (_: Exception) {
+        isoDate
+    }
+}
+
+private fun formatTimeDisplay(isoTime: String): String {
+    return try {
+        val parts = isoTime.split(":")
+        val hour = parts[0].toInt()
+        val minute = parts[1].toInt()
+        val amPm = if (hour < 12) "AM" else "PM"
+        val displayHour = when {
+            hour == 0 -> 12
+            hour > 12 -> hour - 12
+            else -> hour
+        }
+        "%d:%02d %s".format(displayHour, minute, amPm)
+    } catch (_: Exception) {
+        isoTime
     }
 }
 
