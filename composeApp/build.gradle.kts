@@ -127,6 +127,7 @@ compose.desktop {
 
             linux {
                 packageName = "task-planner"
+                iconFile.set(project.file("src/desktopMain/resources/icon.png"))
             }
         }
     }
