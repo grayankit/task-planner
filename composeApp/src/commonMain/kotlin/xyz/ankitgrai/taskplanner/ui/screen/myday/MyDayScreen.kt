@@ -1,8 +1,6 @@
 package xyz.ankitgrai.taskplanner.ui.screen.myday
 
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Menu
@@ -20,9 +18,8 @@ import xyz.ankitgrai.taskplanner.data.repository.CategoryRepository
 import xyz.ankitgrai.taskplanner.data.repository.TaskRepository
 import xyz.ankitgrai.taskplanner.data.sync.SyncManager
 import xyz.ankitgrai.taskplanner.shared.model.CategoryDto
-import xyz.ankitgrai.taskplanner.shared.model.TaskDto
 import xyz.ankitgrai.taskplanner.ui.components.CategoryItem
-import xyz.ankitgrai.taskplanner.ui.components.TaskCard
+import xyz.ankitgrai.taskplanner.ui.components.SectionedTaskList
 import xyz.ankitgrai.taskplanner.ui.screen.auth.AuthScreen
 import xyz.ankitgrai.taskplanner.ui.screen.categories.CategoriesScreen
 import xyz.ankitgrai.taskplanner.ui.screen.settings.SettingsScreen
@@ -115,58 +112,21 @@ class MyDayScreen : Screen {
                     }
                 },
             ) { paddingValues ->
-                Column(
+                SectionedTaskList(
+                    tasks = todayTasks,
+                    emptyMessage = "No tasks for today",
+                    emptySubMessage = "Tasks with today's due date will appear here",
+                    onToggleComplete = { task ->
+                        scope.launch { taskRepository.toggleTaskComplete(task.id) }
+                    },
+                    onTaskClick = { task ->
+                        navigator.push(TaskDetailScreen(task.id))
+                    },
                     modifier = Modifier
                         .fillMaxSize()
                         .padding(paddingValues)
                         .padding(horizontal = 16.dp),
-                ) {
-                    if (todayTasks.isEmpty()) {
-                        Box(
-                            modifier = Modifier.fillMaxSize(),
-                            contentAlignment = Alignment.Center,
-                        ) {
-                            Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                                Text(
-                                    text = "No tasks for today",
-                                    style = MaterialTheme.typography.titleMedium,
-                                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f),
-                                )
-                                Spacer(Modifier.height(4.dp))
-                                Text(
-                                    text = "Tasks with today's due date will appear here",
-                                    style = MaterialTheme.typography.bodySmall,
-                                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.4f),
-                                )
-                            }
-                        }
-                    } else {
-                        Spacer(Modifier.height(8.dp))
-                        Text(
-                            text = "${todayTasks.size} task${if (todayTasks.size != 1) "s" else ""} for today",
-                            style = MaterialTheme.typography.labelMedium,
-                            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
-                        )
-                        Spacer(Modifier.height(8.dp))
-
-                        LazyColumn(
-                            verticalArrangement = Arrangement.spacedBy(8.dp),
-                            contentPadding = PaddingValues(bottom = 80.dp),
-                        ) {
-                            items(todayTasks, key = { it.id }) { task ->
-                                TaskCard(
-                                    task = task,
-                                    onToggleComplete = {
-                                        scope.launch { taskRepository.toggleTaskComplete(task.id) }
-                                    },
-                                    onClick = {
-                                        navigator.push(TaskDetailScreen(task.id))
-                                    },
-                                )
-                            }
-                        }
-                    }
-                }
+                )
             }
         }
     }
