@@ -123,6 +123,8 @@ compose.desktop {
             description = "Task Planner - KMP task management app"
             vendor = "ankitgrai"
 
+            modules("java.sql")
+
             linux {
                 packageName = "task-planner"
             }
