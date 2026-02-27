@@ -25,6 +25,7 @@ import xyz.ankitgrai.taskplanner.ui.components.CategoryItem
 import xyz.ankitgrai.taskplanner.ui.components.TaskCard
 import xyz.ankitgrai.taskplanner.ui.screen.auth.AuthScreen
 import xyz.ankitgrai.taskplanner.ui.screen.categories.CategoriesScreen
+import xyz.ankitgrai.taskplanner.ui.screen.settings.SettingsScreen
 import xyz.ankitgrai.taskplanner.ui.screen.taskdetail.TaskDetailScreen
 import xyz.ankitgrai.taskplanner.ui.screen.tasklist.TaskListScreen
 import kotlinx.coroutines.launch
@@ -64,6 +65,10 @@ class MyDayScreen : Screen {
                         onManageCategories = {
                             scope.launch { drawerState.close() }
                             navigator.push(CategoriesScreen())
+                        },
+                        onSettings = {
+                            scope.launch { drawerState.close() }
+                            navigator.push(SettingsScreen())
                         },
                         onLogout = {
                             syncManager.stopPeriodicSync()
@@ -173,6 +178,7 @@ private fun DrawerContent(
     onMyDayClick: () -> Unit,
     onCategoryClick: (CategoryDto) -> Unit,
     onManageCategories: () -> Unit,
+    onSettings: () -> Unit,
     onLogout: () -> Unit,
 ) {
     Column(
@@ -229,6 +235,15 @@ private fun DrawerContent(
             modifier = Modifier.padding(horizontal = 8.dp),
         ) {
             Text("Manage Categories")
+        }
+
+        Spacer(Modifier.height(4.dp))
+
+        TextButton(
+            onClick = onSettings,
+            modifier = Modifier.padding(horizontal = 8.dp),
+        ) {
+            Text("Settings")
         }
 
         Spacer(Modifier.weight(1f))

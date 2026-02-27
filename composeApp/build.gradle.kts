@@ -87,8 +87,12 @@ android {
         applicationId = "xyz.ankitgrai.taskplanner"
         minSdk = 26
         targetSdk = 35
-        versionCode = 1
-        versionName = "1.0"
+        versionCode = (findProperty("app.version.code") as String).toInt()
+        versionName = findProperty("app.version.name") as String
+    }
+
+    buildFeatures {
+        buildConfig = true
     }
 
     signingConfigs {
@@ -119,7 +123,7 @@ compose.desktop {
 
         nativeDistributions {
             packageName = "TaskPlanner"
-            packageVersion = "1.0.0"
+            packageVersion = findProperty("app.version.name") as String
             description = "Task Planner - KMP task management app"
             vendor = "ankitgrai"
 

@@ -5,12 +5,18 @@ import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
 import androidx.compose.ui.window.rememberWindowState
 import xyz.ankitgrai.taskplanner.data.local.DriverFactory
+import xyz.ankitgrai.taskplanner.data.local.PreferencesFactory
 import xyz.ankitgrai.taskplanner.di.appModule
 import org.koin.core.context.startKoin
 
 fun main() {
     startKoin {
-        modules(appModule(DriverFactory()))
+        modules(
+            appModule(
+                DriverFactory(),
+                PreferencesFactory(),
+            )
+        )
     }
 
     application {
