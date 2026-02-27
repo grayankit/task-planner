@@ -5,7 +5,8 @@ import com.auth0.jwt.algorithms.Algorithm
 import java.util.Date
 
 object JwtConfig {
-    private val secret: String get() = System.getenv("JWT_SECRET") ?: "dev-secret-change-in-production"
+    private val secret: String get() = System.getenv("JWT_SECRET")
+        ?: error("JWT_SECRET environment variable is required")
     private val issuer: String get() = System.getenv("JWT_ISSUER") ?: "task-planner"
     private val audience: String get() = System.getenv("JWT_AUDIENCE") ?: "task-planner-users"
     private const val VALIDITY_MS = 7L * 24 * 60 * 60 * 1000 // 7 days

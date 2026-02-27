@@ -9,7 +9,8 @@ import io.ktor.server.auth.jwt.*
 import io.ktor.server.response.*
 
 fun Application.configureAuth() {
-    val jwtSecret = System.getenv("JWT_SECRET") ?: "dev-secret-change-in-production"
+    val jwtSecret = System.getenv("JWT_SECRET")
+        ?: error("JWT_SECRET environment variable is required")
     val jwtIssuer = System.getenv("JWT_ISSUER") ?: "task-planner"
     val jwtAudience = System.getenv("JWT_AUDIENCE") ?: "task-planner-users"
 

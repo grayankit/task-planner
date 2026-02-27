@@ -18,7 +18,7 @@ object HttpClientFactory {
                 })
             }
             install(Logging) {
-                level = LogLevel.BODY
+                level = LogLevel.NONE
             }
             install(HttpTimeout) {
                 requestTimeoutMillis = 30_000
