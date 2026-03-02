@@ -21,6 +21,8 @@ fun Route.syncRoutes() {
     val categoryDao = CategoryDao()
     val deletedEntityDao = DeletedEntityDao()
     val json = Json { ignoreUnknownKeys = true }
+    // PostgreSQL minimum safe timestamp (4713 BC is the absolute min, but epoch is practical)
+    val epoch = LocalDateTime.of(1970, 1, 1, 0, 0)
 
     route("/sync") {
         // Pull changes from server since a given timestamp
@@ -32,10 +34,10 @@ fun Route.syncRoutes() {
                 try {
                     LocalDateTime.parse(sinceParam, DateTimeFormatter.ISO_LOCAL_DATE_TIME)
                 } catch (e: Exception) {
-                    LocalDateTime.MIN
+                    epoch
                 }
             } else {
-                LocalDateTime.MIN
+                epoch
             }
 
             val tasks = taskDao.getModifiedSince(userId, since)
