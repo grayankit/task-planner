@@ -10,6 +10,8 @@ import kotlinx.serialization.json.Json
 object HttpClientFactory {
     fun create(): HttpClient {
         return HttpClient {
+            expectSuccess = true
+
             install(ContentNegotiation) {
                 json(Json {
                     prettyPrint = true

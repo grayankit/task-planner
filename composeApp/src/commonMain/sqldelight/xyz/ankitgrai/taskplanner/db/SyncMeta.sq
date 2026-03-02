@@ -8,3 +8,6 @@ SELECT last_sync_timestamp FROM SyncMetadata WHERE id = 1;
 
 updateLastSync:
 INSERT OR REPLACE INTO SyncMetadata (id, last_sync_timestamp) VALUES (1, ?);
+
+clearLastSync:
+DELETE FROM SyncMetadata;

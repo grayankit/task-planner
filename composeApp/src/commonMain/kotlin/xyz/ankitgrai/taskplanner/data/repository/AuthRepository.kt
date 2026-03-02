@@ -48,5 +48,6 @@ class AuthRepository(
         database.taskQueries.deleteAllTasks()
         database.categoryQueries.deleteAllCategories()
         database.syncQueueQueries.clearAll()
+        database.syncMetaQueries.clearLastSync()
     }
 }

@@ -114,8 +114,12 @@ class AuthScreen : Screen {
 
                         result.fold(
                             onSuccess = { response ->
-                                // Start sync after login
-                                syncManager.sync(response.token)
+                                // Sync after login — failures are non-blocking
+                                try {
+                                    syncManager.sync(response.token)
+                                } catch (_: Exception) {
+                                    // Sync will retry via periodic sync
+                                }
                                 syncManager.startPeriodicSync(response.token)
                                 navigator.replaceAll(MyDayScreen())
                             },

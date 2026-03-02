@@ -103,7 +103,12 @@ class SyncManager(
     private suspend fun pullRemoteChanges(token: String) {
         val lastSync = database.syncMetaQueries.getLastSync().executeAsOneOrNull()?.last_sync_timestamp
 
-        val response = apiService.syncPull(token, lastSync)
+        // Force a full pull if local data is empty (e.g. after logout/reinstall)
+        val localCategories = database.categoryQueries.getAllCategories().executeAsList()
+        val hasLocalData = localCategories.isNotEmpty()
+        val effectiveSince = if (hasLocalData) lastSync else null
+
+        val response = apiService.syncPull(token, effectiveSince)
 
         // Apply pulled changes
         response.tasks.forEach { task -> taskRepository.upsertTask(task) }
