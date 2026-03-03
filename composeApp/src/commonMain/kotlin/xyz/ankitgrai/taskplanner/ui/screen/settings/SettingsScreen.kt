@@ -32,6 +32,7 @@ import xyz.ankitgrai.taskplanner.ui.theme.ThemeManager
 import xyz.ankitgrai.taskplanner.ui.theme.ThemeMode
 import xyz.ankitgrai.taskplanner.util.getAppVersion
 import xyz.ankitgrai.taskplanner.util.isAndroid
+import xyz.ankitgrai.taskplanner.util.WidgetSettingsContent
 
 class SettingsScreen : Screen {
 
@@ -185,6 +186,11 @@ class SettingsScreen : Screen {
                     HorizontalDivider()
 
                     Spacer(Modifier.height(16.dp))
+                }
+
+                // --- Widgets Section (Android only) ---
+                if (isAndroid()) {
+                    WidgetSettingsContent()
                 }
 
                 // --- About Section ---

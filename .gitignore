@@ -14,6 +14,7 @@ kls_database.db
 # Android
 local.properties
 composeApp/keystore/
+androidx/
 
 # Environment
 .env

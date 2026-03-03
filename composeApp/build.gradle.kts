@@ -15,6 +15,9 @@ kotlin {
             }
         }
     }
+//    jvm {
+//        jvmTarget = "17"
+//    }
 
     jvm("desktop")
 
@@ -56,6 +59,9 @@ kotlin {
 
                 // UUID
                 implementation(libs.uuid)
+
+                //Glace
+//                implementation()
             }
         }
 
@@ -65,6 +71,9 @@ kotlin {
                 implementation(libs.sqldelight.android.driver)
                 implementation(libs.androidx.activity.compose)
                 implementation(libs.androidx.appcompat)
+                implementation(libs.androidx.glance.appwidget)
+                implementation(libs.androidx.glance.material3)
+
             }
         }
 
@@ -81,7 +90,7 @@ kotlin {
 
 android {
     namespace = "xyz.ankitgrai.taskplanner"
-    compileSdk = 35
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "xyz.ankitgrai.taskplanner"
@@ -106,7 +115,7 @@ android {
 
     buildTypes {
         release {
-            isMinifyEnabled = false
+            isMinifyEnabled = true
             signingConfig = signingConfigs.getByName("release")
         }
     }

@@ -84,11 +84,10 @@ class CategoriesScreen : Screen {
                 initialColor = "#42A5F5",
                 existingCategories = categories,
                 excludeCategoryId = null,
-                onDismiss = { showCreateDialog = false },
+                onDismiss = { },
                 onSave = { name, color ->
                     scope.launch {
                         categoryRepository.createCategory(name, color)
-                        showCreateDialog = false
                     }
                 },
             )
@@ -102,7 +101,7 @@ class CategoriesScreen : Screen {
                 initialColor = editingCategory!!.color ?: "#42A5F5",
                 existingCategories = categories,
                 excludeCategoryId = editingCategory!!.id,
-                onDismiss = { editingCategory = null },
+                onDismiss = { },
                 onSave = { name, color ->
                     scope.launch {
                         categoryRepository.updateCategory(editingCategory!!.id, name, color)
@@ -239,7 +238,7 @@ private fun CategoryDialog(
                             color = parseColor(presetColor),
                             onClick = { color = presetColor },
                             border = if (color == presetColor) {
-                                ButtonDefaults.outlinedButtonBorder
+                                ButtonDefaults.outlinedButtonBorder(true)
                             } else {
                                 null
                             },
