@@ -45,7 +45,7 @@ data class TaskDetailScreen(
 
         var title by remember { mutableStateOf("") }
         var description by remember { mutableStateOf("") }
-        var priority by remember { mutableStateOf(Priority.MEDIUM.value) }
+        var priority by remember { mutableIntStateOf(Priority.MEDIUM.value) }
         val today = remember { Clock.System.todayIn(TimeZone.currentSystemDefault()).toString() }
         var dueDate by remember { mutableStateOf(today) }
         var dueTime by remember { mutableStateOf("") }
@@ -86,7 +86,7 @@ data class TaskDetailScreen(
                         }
                     },
                     actions = {
-                        if (isEditing && taskId != null) {
+                        if (isEditing) {
                             IconButton(onClick = {
                                 scope.launch {
                                     taskRepository.deleteTask(taskId)
@@ -289,7 +289,7 @@ data class TaskDetailScreen(
                         scope.launch {
                             if (title.isBlank()) return@launch
 
-                            if (isEditing && taskId != null) {
+                            if (isEditing) {
                                 taskRepository.updateTask(
                                     id = taskId,
                                     categoryId = selectedCategoryId,
@@ -381,7 +381,7 @@ private fun CategoryDropdown(
                 onValueChange = {},
                 readOnly = true,
                 trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
-                modifier = Modifier.fillMaxWidth().menuAnchor(),
+                modifier = Modifier.fillMaxWidth().menuAnchor(MenuAnchorType.PrimaryNotEditable),
                 shape = RoundedCornerShape(12.dp),
             )
             ExposedDropdownMenu(

@@ -5,7 +5,7 @@ import androidx.compose.ui.graphics.Color
 // Priority colors
 val PriorityCritical = Color(0xFFE53935)
 val PriorityHigh = Color(0xFFFB8C00)
-val PriorityMedium = Color(0xFFFDD835)
+val PriorityMedium = Color(0xFFFDD235)
 val PriorityLow = Color(0xFF42A5F5)
 
 // App colors
