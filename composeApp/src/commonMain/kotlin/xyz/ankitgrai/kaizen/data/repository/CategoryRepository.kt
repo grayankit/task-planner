@@ -22,15 +22,15 @@ class CategoryRepository(
             .map { entities -> entities.map { it.toDto() } }
     }
 
-    fun getCategoryById(id: String): CategoryDto? {
-        return database.categoryQueries.getCategoryById(id).executeAsOneOrNull()?.toDto()
-    }
+//    fun getCategoryById(id: String): CategoryDto? {
+//        return database.categoryQueries.getCategoryById(id).executeAsOneOrNull()?.toDto()
+//    }
 
     fun getDefaultCategory(): CategoryDto? {
         return database.categoryQueries.getDefaultCategory().executeAsOneOrNull()?.toDto()
     }
 
-    suspend fun createCategory(name: String, color: String?): CategoryDto {
+    fun createCategory(name: String, color: String?): CategoryDto {
         val id = uuid4().toString()
         val now = Clock.System.now().toString()
 
@@ -58,7 +58,7 @@ class CategoryRepository(
         return category
     }
 
-    suspend fun updateCategory(id: String, name: String, color: String?): CategoryDto? {
+    fun updateCategory(id: String, name: String, color: String?): CategoryDto? {
         val now = Clock.System.now().toString()
         val existing = database.categoryQueries.getCategoryById(id).executeAsOneOrNull() ?: return null
 
@@ -74,7 +74,7 @@ class CategoryRepository(
         return updated
     }
 
-    suspend fun deleteCategory(id: String) {
+    fun deleteCategory(id: String) {
         database.categoryQueries.deleteCategory(id)
         syncEnqueuer.enqueueDelete("category", id)
     }

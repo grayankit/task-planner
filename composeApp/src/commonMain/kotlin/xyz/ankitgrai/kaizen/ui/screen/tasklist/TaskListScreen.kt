@@ -36,7 +36,9 @@ data class TaskListScreen(
                 TopAppBar(
                     title = { Text(categoryName) },
                     navigationIcon = {
-                        IconButton(onClick = { navigator.pop() }) {
+                        IconButton(onClick = { navigator.pop() }
+
+                        ) {
                             Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
                         }
                     },

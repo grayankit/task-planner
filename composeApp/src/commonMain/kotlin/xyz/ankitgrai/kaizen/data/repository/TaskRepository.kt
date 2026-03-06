@@ -11,7 +11,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.datetime.Clock
-import kotlinx.datetime.LocalDate
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.todayIn
 
@@ -48,7 +47,7 @@ class TaskRepository(
             .map { it?.toDto() }
     }
 
-    suspend fun createTask(
+    fun createTask(
         categoryId: String?,
         title: String,
         description: String?,
@@ -97,7 +96,7 @@ class TaskRepository(
         return task
     }
 
-    suspend fun updateTask(
+    fun updateTask(
         id: String,
         categoryId: String?,
         title: String,
@@ -136,7 +135,7 @@ class TaskRepository(
         return updated
     }
 
-    suspend fun toggleTaskComplete(id: String) {
+    fun toggleTaskComplete(id: String) {
         val existing = database.taskQueries.getTaskById(id).executeAsOneOrNull() ?: return
         val now = Clock.System.now().toString()
         val newCompleted = if (existing.is_completed == 0L) 1L else 0L
@@ -157,7 +156,7 @@ class TaskRepository(
         syncEnqueuer.enqueueUpdate("task", id, updated)
     }
 
-    suspend fun deleteTask(id: String) {
+    fun deleteTask(id: String) {
         database.taskQueries.deleteTask(id)
         syncEnqueuer.enqueueDelete("task", id)
     }

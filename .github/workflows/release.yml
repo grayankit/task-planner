@@ -43,13 +43,13 @@ jobs:
         run: |
           VERSION="${GITHUB_REF_NAME#v}"
           mv composeApp/build/outputs/apk/release/composeApp-release.apk \
-             composeApp/build/outputs/apk/release/TaskPlanner-${VERSION}-android.apk
+             composeApp/build/outputs/apk/release/Kaizen-${VERSION}-android.apk
 
       - name: Upload APK artifact
         uses: actions/upload-artifact@v4
         with:
           name: android-apk
-          path: composeApp/build/outputs/apk/release/TaskPlanner-*-android.apk
+          path: composeApp/build/outputs/apk/release/Kaizen-*-android.apk
 
   build-linux:
     name: Build Linux Desktop
@@ -77,13 +77,13 @@ jobs:
         run: |
           VERSION="${GITHUB_REF_NAME#v}"
           cd composeApp/build/compose/binaries/main/app
-          tar -czf "${GITHUB_WORKSPACE}/TaskPlanner-${VERSION}-linux-x64.tar.gz" *
+          tar -czf "${GITHUB_WORKSPACE}/Kaizen-${VERSION}-linux-x64.tar.gz" *
 
       - name: Upload Linux artifact
         uses: actions/upload-artifact@v4
         with:
           name: linux-desktop
-          path: TaskPlanner-*-linux-x64.tar.gz
+          path: Kaizen-*-linux-x64.tar.gz
 
   create-release:
     name: Create GitHub Release
@@ -100,5 +100,5 @@ jobs:
         with:
           generate_release_notes: true
           files: |
-            TaskPlanner-*-android.apk
-            TaskPlanner-*-linux-x64.tar.gz
+            Kaizen-*-android.apk
+            Kaizen-*-linux-x64.tar.gz

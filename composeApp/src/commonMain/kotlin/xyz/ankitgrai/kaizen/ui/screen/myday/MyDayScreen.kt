@@ -51,6 +51,7 @@ class MyDayScreen : Screen {
             drawerContent = {
                 ModalDrawerSheet {
                     DrawerContent(
+                        username = authRepository.getStoredUsername(),
                         categories = categories,
                         onMyDayClick = {
                             scope.launch { drawerState.close() }
@@ -134,6 +135,7 @@ class MyDayScreen : Screen {
 
 @Composable
 private fun DrawerContent(
+    username: String?,
     categories: List<CategoryDto>,
     onMyDayClick: () -> Unit,
     onCategoryClick: (CategoryDto) -> Unit,
@@ -151,6 +153,14 @@ private fun DrawerContent(
             style = MaterialTheme.typography.headlineSmall,
             color = MaterialTheme.colorScheme.primary,
         )
+
+        if (username != null) {
+            Text(
+                text = "@$username",
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
+            )
+        }
 
         Spacer(Modifier.height(24.dp))
 
