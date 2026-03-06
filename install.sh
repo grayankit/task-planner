@@ -18,7 +18,7 @@ TMP_DIR=$(mktemp -d)
 cleanup() { rm -rf "$TMP_DIR"; }
 trap cleanup EXIT
 
-echo ":: Installing Task Planner $VERSION"
+echo ":: Installing Kaizen $VERSION"
 
 # Download
 echo ":: Downloading $ASSET..."
@@ -36,8 +36,8 @@ echo ":: Creating desktop entry..."
 mkdir -p "$(dirname "$DESKTOP_FILE")"
 cat > "$DESKTOP_FILE" << EOF
 [Desktop Entry]
-Name=Task Planner
-Comment=Offline-first task planner with sync
+Name=Kaizen
+Comment=Offline-first task manager with sync
 Exec=$INSTALL_DIR/bin/TaskPlanner
 Icon=$INSTALL_DIR/lib/TaskPlanner.png
 Terminal=false
@@ -47,4 +47,4 @@ StartupWMClass=TaskPlanner
 EOF
 update-desktop-database "$(dirname "$DESKTOP_FILE")" 2>/dev/null || true
 
-echo ":: Task Planner $VERSION installed successfully"
+echo ":: Kaizen $VERSION installed successfully"

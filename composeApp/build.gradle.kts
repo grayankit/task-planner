@@ -89,11 +89,11 @@ kotlin {
 }
 
 android {
-    namespace = "xyz.ankitgrai.taskplanner"
+    namespace = "xyz.ankitgrai.kaizen"
     compileSdk = 36
 
     defaultConfig {
-        applicationId = "xyz.ankitgrai.taskplanner"
+        applicationId = "xyz.ankitgrai.kaizen"
         minSdk = 26
         targetSdk = 35
         versionCode = (findProperty("app.version.code") as String).toInt()
@@ -128,18 +128,18 @@ android {
 
 compose.desktop {
     application {
-        mainClass = "xyz.ankitgrai.taskplanner.MainKt"
+        mainClass = "xyz.ankitgrai.kaizen.MainKt"
 
         nativeDistributions {
-            packageName = "TaskPlanner"
+            packageName = "Kaizen"
             packageVersion = findProperty("app.version.name") as String
-            description = "Task Planner - KMP task management app"
+            description = "Kaizen - KMP task management app"
             vendor = "ankitgrai"
 
             modules("java.sql")
 
             linux {
-                packageName = "task-planner"
+                packageName = "kaizen"
                 iconFile.set(project.file("src/desktopMain/resources/icon.png"))
             }
         }
@@ -149,7 +149,7 @@ compose.desktop {
 sqldelight {
     databases {
         create("TaskPlannerDatabase") {
-            packageName.set("xyz.ankitgrai.taskplanner.db")
+            packageName.set("xyz.ankitgrai.kaizen.db")
         }
     }
 }

@@ -13,5 +13,5 @@
     android:initialLayout="@layout/widget_loading"
     android:previewImage="@drawable/widget_preview"
     android:description="@string/widget_description"
-    android:configure="xyz.ankitgrai.taskplanner.widget.WidgetConfigActivity"
+    android:configure="xyz.ankitgrai.kaizen.widget.WidgetConfigActivity"
     android:updatePeriodMillis="1800000" />

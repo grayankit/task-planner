@@ -6,7 +6,7 @@ plugins {
 }
 
 application {
-    mainClass.set("xyz.ankitgrai.taskplanner.server.ApplicationKt")
+    mainClass.set("xyz.ankitgrai.kaizen.server.ApplicationKt")
 }
 
 ktor {

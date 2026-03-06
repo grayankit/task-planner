@@ -1,6 +1,18 @@
-# Task Planner
+# Kaizen
+
+> **Kaizen** (改善) -- Japanese for "continuous improvement"
 
 An offline-first task management app built with **Compose Multiplatform** (Kotlin), targeting **Android** and **Linux Desktop**. Tasks sync to a cloud backend via a Ktor server hosted on Render, backed by Neon Postgres.
+
+> [!WARNING]
+> ### Breaking Changes in v1.5.0
+>
+> This release renames the app from **Task Planner** to **Kaizen** with a new package name (`xyz.ankitgrai.kaizen`). This introduces the following breaking changes:
+>
+> - **Android:** The `applicationId` has changed. Android treats this as a **new app**. You must **uninstall the old "Task Planner" app** before installing Kaizen. Local data (tasks, categories, preferences) from the old app **will not carry over** -- sync with the server after installing to restore your data.
+> - **Linux Desktop:** The distributable package name changed from `task-planner` to `kaizen`. If you used `install.sh`, re-run it to install the new version. The old `~/.local/bin/TaskPlanner/` installation can be removed manually.
+> - **Server:** The API health check response text changed. No action needed unless you have monitoring that checks the exact response body.
+> - **Themed icon (Android 13+):** A monochrome icon layer was added so the app icon adapts to your phone's Material You theme.
 
 ## Features
 
