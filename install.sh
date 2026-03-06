@@ -2,8 +2,8 @@
 set -euo pipefail
 
 REPO="grayankit/task-planner"
-INSTALL_DIR="$HOME/.local/bin/TaskPlanner"
-DESKTOP_FILE="$HOME/.local/share/applications/taskplanner.desktop"
+INSTALL_DIR="$HOME/.local/bin/Kaizen"
+DESKTOP_FILE="$HOME/.local/share/applications/kaizen.desktop"
 
 # Get version: use argument, or fetch latest from GitHub
 if [[ $# -ge 1 ]]; then
@@ -12,7 +12,7 @@ else
     VERSION=$(gh release view --repo "$REPO" --json tagName -q '.tagName')
 fi
 
-ASSET="TaskPlanner-${VERSION#v}-linux-x64.tar.gz"
+ASSET="Kaizen-${VERSION#v}-linux-x64.tar.gz"
 TMP_DIR=$(mktemp -d)
 
 cleanup() { rm -rf "$TMP_DIR"; }
@@ -29,7 +29,7 @@ echo ":: Extracting..."
 rm -rf "$INSTALL_DIR"
 mkdir -p "$(dirname "$INSTALL_DIR")"
 tar xzf "$TMP_DIR/$ASSET" -C "$(dirname "$INSTALL_DIR")"
-chmod +x "$INSTALL_DIR/bin/TaskPlanner"
+chmod +x "$INSTALL_DIR/bin/Kaizen"
 
 # Desktop entry
 echo ":: Creating desktop entry..."
@@ -38,12 +38,12 @@ cat > "$DESKTOP_FILE" << EOF
 [Desktop Entry]
 Name=Kaizen
 Comment=Offline-first task manager with sync
-Exec=$INSTALL_DIR/bin/TaskPlanner
-Icon=$INSTALL_DIR/lib/TaskPlanner.png
+Exec=$INSTALL_DIR/bin/Kaizen
+Icon=$INSTALL_DIR/lib/Kaizen.png
 Terminal=false
 Type=Application
 Categories=Office;ProjectManagement;
-StartupWMClass=TaskPlanner
+StartupWMClass=Kaizen
 EOF
 update-desktop-database "$(dirname "$DESKTOP_FILE")" 2>/dev/null || true
 
