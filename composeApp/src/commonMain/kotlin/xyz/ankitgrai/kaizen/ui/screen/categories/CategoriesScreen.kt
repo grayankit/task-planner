@@ -1,5 +1,6 @@
 package xyz.ankitgrai.kaizen.ui.screen.categories
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -84,10 +85,11 @@ class CategoriesScreen : Screen {
                 initialColor = "#42A5F5",
                 existingCategories = categories,
                 excludeCategoryId = null,
-                onDismiss = { },
+                onDismiss = { showCreateDialog = false },
                 onSave = { name, color ->
                     scope.launch {
                         categoryRepository.createCategory(name, color)
+                        showCreateDialog = false
                     }
                 },
             )
@@ -101,7 +103,7 @@ class CategoriesScreen : Screen {
                 initialColor = editingCategory!!.color ?: "#42A5F5",
                 existingCategories = categories,
                 excludeCategoryId = editingCategory!!.id,
-                onDismiss = { },
+                onDismiss = { editingCategory = null },
                 onSave = { name, color ->
                     scope.launch {
                         categoryRepository.updateCategory(editingCategory!!.id, name, color)
@@ -238,7 +240,7 @@ private fun CategoryDialog(
                             color = parseColor(presetColor),
                             onClick = { color = presetColor },
                             border = if (color == presetColor) {
-                                ButtonDefaults.outlinedButtonBorder(true)
+                                BorderStroke(3.dp, MaterialTheme.colorScheme.primary)
                             } else {
                                 null
                             },
