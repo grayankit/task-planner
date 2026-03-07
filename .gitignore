@@ -24,4 +24,7 @@ Thumbs.db
 *.swp
 *~
 
+# Scripts
+generate_icons.py
+
 AGENTS.md

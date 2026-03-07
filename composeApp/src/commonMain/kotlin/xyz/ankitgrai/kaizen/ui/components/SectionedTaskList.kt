@@ -19,12 +19,13 @@ import xyz.ankitgrai.kaizen.shared.model.TaskDto
 
 @Composable
 fun SectionedTaskList(
+    modifier: Modifier = Modifier,
     tasks: List<TaskDto>,
     emptyMessage: String,
     emptySubMessage: String? = null,
     onToggleComplete: (TaskDto) -> Unit,
     onTaskClick: (TaskDto) -> Unit,
-    modifier: Modifier = Modifier,
+
 ) {
     val pendingTasks = tasks.filter { !it.isCompleted }
     val completedTasks = tasks.filter { it.isCompleted }
