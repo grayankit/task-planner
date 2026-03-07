@@ -21,6 +21,7 @@ import xyz.ankitgrai.kaizen.shared.model.CategoryDto
 import xyz.ankitgrai.kaizen.ui.components.CategoryItem
 import xyz.ankitgrai.kaizen.ui.components.SectionedTaskList
 import xyz.ankitgrai.kaizen.ui.screen.auth.AuthScreen
+import xyz.ankitgrai.kaizen.ui.screen.alltasks.AllTasksScreen
 import xyz.ankitgrai.kaizen.ui.screen.categories.CategoriesScreen
 import xyz.ankitgrai.kaizen.ui.screen.settings.SettingsScreen
 import xyz.ankitgrai.kaizen.ui.screen.taskdetail.TaskDetailScreen
@@ -63,6 +64,10 @@ class MyDayScreen : Screen {
                         onManageCategories = {
                             scope.launch { drawerState.close() }
                             navigator.push(CategoriesScreen())
+                        },
+                        onAllTasks = {
+                            scope.launch { drawerState.close() }
+                            navigator.push(AllTasksScreen())
                         },
                         onSettings = {
                             scope.launch { drawerState.close() }
@@ -140,6 +145,7 @@ private fun DrawerContent(
     onMyDayClick: () -> Unit,
     onCategoryClick: (CategoryDto) -> Unit,
     onManageCategories: () -> Unit,
+    onAllTasks: () -> Unit,
     onSettings: () -> Unit,
     onLogout: () -> Unit,
 ) {
@@ -205,6 +211,15 @@ private fun DrawerContent(
             modifier = Modifier.padding(horizontal = 8.dp),
         ) {
             Text("Manage Categories")
+        }
+
+        Spacer(Modifier.height(4.dp))
+
+        TextButton(
+            onClick = onAllTasks,
+            modifier = Modifier.padding(horizontal = 8.dp),
+        ) {
+            Text("All Tasks")
         }
 
         Spacer(Modifier.height(4.dp))

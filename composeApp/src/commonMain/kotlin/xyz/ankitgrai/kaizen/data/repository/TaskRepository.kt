@@ -47,6 +47,16 @@ class TaskRepository(
             .map { it?.toDto() }
     }
 
+    fun getTaskCount(): Long {
+        return database.taskQueries.getTaskCount().executeAsOne()
+    }
+
+    fun getTasksPaginated(limit: Long, offset: Long): List<TaskDto> {
+        return database.taskQueries.getAllTasksPaginated(limit, offset)
+            .executeAsList()
+            .map { it.toDto() }
+    }
+
     fun createTask(
         categoryId: String?,
         title: String,

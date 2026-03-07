@@ -48,5 +48,11 @@ UPDATE TaskEntity SET is_completed = ?, completed_at = ?, updated_at = ? WHERE i
 deleteTask:
 DELETE FROM TaskEntity WHERE id = ?;
 
+getTaskCount:
+SELECT COUNT(*) FROM TaskEntity;
+
+getAllTasksPaginated:
+SELECT * FROM TaskEntity ORDER BY is_completed ASC, priority ASC, due_date ASC LIMIT ? OFFSET ?;
+
 deleteAllTasks:
 DELETE FROM TaskEntity;
