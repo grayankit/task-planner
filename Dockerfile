@@ -1,8 +1,8 @@
 # Build stage
-FROM gradle:8.10-jdk17 AS builder
+FROM eclipse-temurin:17-jdk AS builder
 WORKDIR /app
 COPY . .
-RUN gradle :server:buildFatJar --no-daemon
+RUN chmod +x ./gradlew && ./gradlew :server:buildFatJar --no-daemon
 
 # Runtime stage
 FROM eclipse-temurin:17-jre-alpine
