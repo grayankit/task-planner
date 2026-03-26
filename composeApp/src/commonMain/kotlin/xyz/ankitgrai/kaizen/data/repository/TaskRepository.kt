@@ -18,12 +18,6 @@ class TaskRepository(
     private val database: TaskPlannerDatabase,
     private val syncEnqueuer: SyncEnqueuer,
 ) {
-    fun getAllTasks(): Flow<List<TaskDto>> {
-        return database.taskQueries.getAllTasks()
-            .asFlow()
-            .mapToList(Dispatchers.Default)
-            .map { entities -> entities.map { it.toDto() } }
-    }
 
     fun getTasksByCategory(categoryId: String): Flow<List<TaskDto>> {
         return database.taskQueries.getTasksByCategory(categoryId)

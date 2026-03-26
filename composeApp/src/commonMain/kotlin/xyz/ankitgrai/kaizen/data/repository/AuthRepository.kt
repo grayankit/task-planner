@@ -1,5 +1,7 @@
 package xyz.ankitgrai.kaizen.data.repository
 
+import io.ktor.client.plugins.ClientRequestException
+import io.ktor.http.HttpStatusCode
 import xyz.ankitgrai.kaizen.data.remote.ApiService
 import xyz.ankitgrai.kaizen.db.TaskPlannerDatabase
 import xyz.ankitgrai.kaizen.shared.request.AuthRequest
@@ -11,10 +13,6 @@ class AuthRepository(
 ) {
     fun getStoredToken(): String? {
         return database.authTokenQueries.getToken().executeAsOneOrNull()?.token
-    }
-
-    fun getStoredUserId(): String? {
-        return database.authTokenQueries.getToken().executeAsOneOrNull()?.user_id
     }
 
     fun getStoredUsername(): String? {
@@ -35,11 +33,19 @@ class AuthRepository(
 
     suspend fun login(username: String, password: String): Result<AuthResponse> {
         return try {
+            val username = username.replace(" ", "")
             val response = apiService.login(AuthRequest(username, password))
             database.authTokenQueries.saveToken(response.token, response.userId, response.username)
             Result.success(response)
+        } catch (e: ClientRequestException) {
+            if (e.response.status == HttpStatusCode.Unauthorized) {
+                Result.failure(IllegalStateException("Invalid credentials"))
+            } else {
+                Result.failure(e)
+            }
         } catch (e: Exception) {
             Result.failure(e)
+
         }
     }
 
