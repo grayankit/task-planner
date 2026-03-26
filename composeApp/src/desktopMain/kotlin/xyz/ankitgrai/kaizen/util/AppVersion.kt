@@ -1,3 +1,3 @@
 package xyz.ankitgrai.kaizen.util
 
-actual fun getAppVersion(): String = "1.3.0"
+actual fun getAppVersion(): String = "1.6.1"
